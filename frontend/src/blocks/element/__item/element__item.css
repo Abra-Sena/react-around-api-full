@@ -1,7 +1,0 @@
-.element__item {
-  position: relative;
-}
-
-.element__item:hover {
-  transform: scale(1.02);
-}
