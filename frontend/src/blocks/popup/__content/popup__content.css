@@ -1,0 +1,23 @@
+@import url('./_infoTool/popup__content_infoTool.css');
+
+.popup__content {
+  position: relative;
+  width: 240px;
+  margin: 0;
+  padding: 0;
+  top: 5%;
+}
+
+@media screen and (min-width: 768px) {
+  .popup__content {
+    width: 433px;
+    top: 10%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .popup__content {
+    width: 816px;
+    top: 8%;
+  }
+}

@@ -1,0 +1,34 @@
+.profile__photo_edit {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.profile__photo_edit:hover {
+  cursor: pointer;
+  border: none;
+  opacity: 1;
+  transition: opacity .5s;
+  background-image: url('../../../../images/edit-icon.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, .6);
+  background-size: 26px;
+}
+
+.profile__photo_edit:focus {
+  outline: none;
+}
+/*
+@media screen and (min-width: 768px) {
+  .profile__photo_edit {
+    left: 20px;
+    top: 50px;
+  }
+} */
