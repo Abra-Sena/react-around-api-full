@@ -1,0 +1,39 @@
+.form__submit {
+  height: 30px;
+  width: 100%;
+  margin: 30px 36px;
+  padding: 0;
+  background: #000000;
+  border-radius: 2px;
+  border: 0;
+
+  font-family: 'Inter', 'Arial', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.form__submit:hover {
+  opacity: .8;
+}
+
+.form__submit_disabled {
+  border: 1px solid #000000;
+  background: #FFFFFF;
+  color: #000000;
+  opacity: .2;
+}
+
+
+@media screen and (min-width: 768px) {
+  .form__submit {
+    width: 358px;
+    height: 50px;
+    margin-top: 48px;
+  }
+}

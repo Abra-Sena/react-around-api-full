@@ -1,0 +1,5 @@
+.popup_type_image {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

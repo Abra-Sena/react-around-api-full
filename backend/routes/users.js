@@ -6,11 +6,11 @@ const { getOneUser, getUsers, getCurrentUser, updateProfile, updateAvatar } = re
 
 router.get('/users', getUsers);
 router.get(
-  '/users/:id',
+  '/users/:_id',
   // celebrate({
   //   body: Joi.string.object.keys({
   //     _id: Joi.string().hex().length(24).required()
-  //   })
+  //   }).unknown(true)
   // }),
   getOneUser
 );
@@ -19,7 +19,7 @@ router.get(
   // celebrate({
   //   body: Joi.object().keys({
   //     email: Joi.string().required().email()
-  //   })
+  //   }).unknown(true)
   // }),
   getCurrentUser
 );
@@ -29,7 +29,7 @@ router.patch(
   //   body: Joi.string.object.keys({
   //     name: Joi.string().required().min(2).max(30),
   //     about: Joi.string().required().min(2).max(30)
-  //   })
+  //   }).unknown(true)
   // }),
   updateProfile
 );
@@ -38,7 +38,7 @@ router.patch(
   // celebrate({
   //   body: Joi.string.object.keys({
   //     avatar: Joi.string().required().uri()
-  //   })
+  //   }).unknown(true)
   // }),
   updateAvatar
 );

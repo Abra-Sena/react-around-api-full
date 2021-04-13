@@ -1,0 +1,22 @@
+@import url('./_count/element__like_count.css');
+
+.element__like {
+  border: none;
+  cursor: pointer;
+  background: url('../../../images/like-button.svg') center no-repeat;
+  background-size: 100%;
+
+  height: 18px;
+  box-sizing: border-box;
+}
+
+.element__like:hover {
+  opacity: 0.5;
+  transition: .3s;
+  transform: scale(1.3);
+}
+
+.element__like_active {
+  opacity: 1;
+  background: url('../../../images/like-button-black.svg') center no-repeat;
+}

@@ -44,11 +44,23 @@ function createUser(req, res) {
 
   //hash password before saving to database
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({name, about, email, password: hash, avatar}))
+    .then((hash) => User.create({
+      name: req.body.name,
+      about: req.body.about,
+      email: req.body.email,
+      password: hash,
+      avatar: req.body.avatar
+    }))
     .then((user) => {
       if(!user) throw new BadRequest('Invalid Data!');
 
-      res.status(200).send(user);
+      res.status(200).send({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar
+      });
     })
     .catch((err) => {
       if(err.name === 'MongoError' && err.code === 11000) {
@@ -64,14 +76,22 @@ function login(req, res, next) {
     .then((user) => {
       if (!user) throw new NotFounded('This User does not exist!');
 
-      const token = jwt.sign({_id: user._id}, NODE_ENV === 'production' ? JWT_SECRET : 'development', { expiresIn: '7d'});
+      const token = jwt.sign(
+        {
+          _id: user._id
+        },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        {
+          expiresIn: '7d'
+        }
+      );
 
-      res.send(token);
+      res.send({token});
     })
     .catch(() => {
       if(res.status(401)) throw new UnAuthorized('Incorrect email or password');
-    })
-    .catch(next);
+    });
+    // .catch(next);
 }
 
 function getCurrentUser(req, res, next) {
