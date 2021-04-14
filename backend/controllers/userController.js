@@ -13,25 +13,24 @@ function getUsers(req, res, next) {
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch((err) => res.status(500).send({ message: err }))
+    // .catch((err) => res.status(500).send({ message: err }))
     .catch(next);
 }
 
 function getOneUser(req, res, next) {
   return User.findById(req.params.id)
     .then((user) => {
-      if (user) {
-        return res.status(200).send(user);
+      if (!user) {
+        throw new NotFounded('User ID not found');
       }
-
-      return res.status(404).send('User ID not found');
+      return res.status(200).send(user);
     })
-    .catch((err) => {
-      if(err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-      }
-      res.status(500).send({ message: err });
-    })
+    // .catch((err) => {
+    //   if(err.name === 'CastError') {
+    //     res.status(400).send({ message: err.message });
+    //   }
+    //   res.status(500).send({ message: err });
+    // })
     .catch(next);
 }
 
@@ -74,7 +73,9 @@ function login(req, res, next) {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) throw new NotFounded('This User does not exist!');
+      if (!user) {
+        throw new NotFounded('This User does not exist!');
+      }
 
       const token = jwt.sign(
         {
@@ -86,10 +87,12 @@ function login(req, res, next) {
         }
       );
 
-      res.send({token});
+      res.send({ token });
     })
     .catch(() => {
-      if(res.status(401)) throw new UnAuthorized('Incorrect email or password');
+      if(res.status(401)) {
+        throw new UnAuthorized('Incorrect email or password');
+      }
     });
     // .catch(next);
 }
@@ -117,7 +120,7 @@ function updateProfile(req, res, next) {
       }
     )
     .then((profile) => {
-      if(!profile) throw new NotFounded('Not a valid profile id');
+      if(!profile) throw new NotFounded('Not a valid profile ID');
 
       return res.status(200).send({ data: profile });
     })
@@ -128,7 +131,7 @@ function updateProfile(req, res, next) {
 function updateAvatar(req, res, next) {
   return User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true, runValidators: true })
     .then((userAvatar) => {
-      if(!userAvatar) throw new NotFounded('Not a valid profile id');
+      if(!userAvatar) throw new NotFounded('Not a valid profile ID');
 
       return res.status(200).send({data: userAvatar});
     })
