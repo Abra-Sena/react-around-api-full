@@ -7,7 +7,6 @@ npm-debug.log*
 
 # Dependency directory
 node_modules
-around_key.pem
 .pnp
 .pnp.js
 

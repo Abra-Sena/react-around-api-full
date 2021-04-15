@@ -10,22 +10,26 @@ class Api {
 
   /**
    * Loading Cards from the Server
-   * GET https://around.nomoreparties.co/v1/groupId/cards
    */
-  getInitialCards() {
+  getInitialCards(token) {
     return fetch(this._baseUrl + '/cards', {
-      headers: this._headers
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
     })
     .then(res => this._checkResult(res))
   }
 
    /**
    * Loading User Information from the Server
-   * GET https://around.nomoreparties.co/v1/groupId/users/me
    */
-  getUserInfo() {
+  getUserInfo(token) {
     return fetch(this._baseUrl + '/users/me', {
-      headers: this._headers
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
     })
     .then(res => this._checkResult(res))
   }
@@ -34,17 +38,19 @@ class Api {
   /**
    * Get all cards and user infos and only then render them
    */
-  getAppInfo() {
-    return Promise.all([this.getUserInfo(), this.getInitialCards()]);
+  getAppInfo(token) {
+    return Promise.all([this.getUserInfo(token), this.getInitialCards(token)]);
   }
 
   /**
    * Adding a New Card
-   * POST https://around.nomoreparties.co/v1/groupId/cards
    */
-  addCard({name, link}) {
+  addCard({name, link}, token) {
     return fetch(this._baseUrl + '/cards', {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "POST",
       body: JSON.stringify({
         name,
@@ -58,9 +64,12 @@ class Api {
     * Deleting a Card
     * DELETE https://around.nomoreparties.co/v1/groupId/cards/cardId
     */
-  removeCard(cardId) {
+  removeCard(cardId, token) {
     return fetch(this._baseUrl + '/cards/' + cardId, {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "DELETE"
     })
     .then(res => this._checkResult(res))
@@ -68,18 +77,24 @@ class Api {
 
   //Adding and Removing Likes
   /** PUT https://around.nomoreparties.co/v1/groupId/cards/likes/cardId */
-  addCardLike(cardId) {
+  addCardLike(cardId, token) {
     return fetch(this._baseUrl + '/cards/likes/' + cardId, {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "PUT"
     })
     .then(res =>this._checkResult(res))
   }
 
   /** DELETE https://around.nomoreparties.co/v1/groupId/cards/likes/cardId */
-  removeCardLike(cardId) {
+  removeCardLike(cardId, token) {
     return fetch(this._baseUrl + '/cards/likes/' + cardId, {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "DELETE"
     })
     .then(res => this._checkResult(res))
@@ -89,9 +104,12 @@ class Api {
     * Updating Profile Picture
     * PATCH https://around.nomoreparties.co/v1/groupId/users/me/avatar
     */
-  setUserAvatar({avatar}) {
+  setUserAvatar({avatar}, token) {
     return fetch(this._baseUrl + '/users/me/avatar', {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "PATCH",
       body: JSON.stringify({
         avatar
@@ -104,9 +122,12 @@ class Api {
    * Editing the Profile
    * PATCH https://around.nomoreparties.co/v1/groupId/users/me
    */
-  setUserInfos({name, about}) {
+  setUserInfos({name, about}, token) {
     return fetch(this._baseUrl + '/users/me', {
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       method: "PATCH",
       body: JSON.stringify({
         name,
@@ -118,9 +139,10 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: "http://localhost:3001",
+  // baseUrl: "https://abravi-dev.students.nomoreparties.site"
+  baseUrl: "http://localhost:3000",
   headers: {
-    "Authorization": `Bearer %{token}`,
+    // "Authorization": `Bearer ${token}`,
     "Content-Type": "application/json"
   }
 });

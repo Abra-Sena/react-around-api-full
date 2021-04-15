@@ -4,18 +4,18 @@ const { celebrate, Joi } = require('celebrate');
 const router = express.Router();
 const { getOneUser, getUsers, getCurrentUser, updateProfile, updateAvatar } = require('../controllers/userController');
 
-router.get('/users', getUsers);
+router.get('/', getUsers);
 router.get(
-  '/users/:_id',
+  '/:_id',
   celebrate({
-    body: Joi.object().keys({
+    params: Joi.object().keys({
       _id: Joi.string().hex().length(24).required()
-    }).unknown(true)
+    })
   }),
   getOneUser
 );
 router.get(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email()
@@ -24,7 +24,7 @@ router.get(
   getCurrentUser
 );
 router.patch(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
@@ -34,7 +34,7 @@ router.patch(
   updateProfile
 );
 router.patch(
-  '/users/me/avatar',
+  '/me/avatar',
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().required().uri()

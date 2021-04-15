@@ -6,21 +6,21 @@ const {NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  console.log(authorization);
+  console.log('auth: ', authorization);
 
-  if (!authorization || !authorization.startswith('Bearer ')) {
-    next(new UnAuthorized('Authorization required. No auth!'));
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new UnAuthorized('Authorization required. No auth!');
   }
 
   const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+    payload = jwt.verify(token, 'some-secret-key'); //NODE_ENV === 'production' ? JWT_SECRET : 'development'
   } catch(err) {
-    next(new UnAuthorized('Authorization required. No auth!'));
+    throw new UnAuthorized('Authorization required. No auth!');
   }
 
   req.user = payload;
-  return next();
+  next();
 };

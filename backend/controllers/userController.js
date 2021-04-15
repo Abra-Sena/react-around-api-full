@@ -18,7 +18,7 @@ function getUsers(req, res, next) {
 }
 
 function getOneUser(req, res, next) {
-  return User.findById(req.params.id)
+  return User.findById(req.params.id === 'me' ? req.params._id : req.params.id)
     .then((user) => {
       if (!user) {
         throw new NotFounded('User ID not found');

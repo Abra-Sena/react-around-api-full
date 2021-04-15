@@ -32,6 +32,7 @@ function App() {
   const [password, setPassword] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [token, setToken] = React.useState(localStorage.getItem("jwt"));
 
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({name: "Yosemite", link: "https://code.s3.yandex.net/web-code/yosemite.jpg"});
@@ -127,12 +128,7 @@ function App() {
     setImageExpand(false);
     setInfoTooltip(false);
   }
-  // to be handled later
-  // function handleEscClose(evt) {
-  //   if(evt.key === 'Escape') {
-  //     closeAllPopups();
-  //   }
-  // }
+
   function handlePopupClose(evt) {
     if(evt.target !== evt.currentTarget) return;
 
@@ -190,12 +186,11 @@ function App() {
             console.log(res.err);
           }
 
-          if(res) {
-            setEmail(res.data.email);
-            setIsLoggedIn(true);
-            setIsSuccess(true);
-            history.push('/');
-          }
+          setEmail(res.data.email);
+          setIsLoggedIn(true);
+          setIsSuccess(true);
+          setToken(jwt);
+          history.push('/');
         })
         .catch((err) => console.log(err));
     }
@@ -203,15 +198,16 @@ function App() {
 
   //collect user's informations
   React.useEffect(() => {
-    api.getAppInfo()
+    api.getAppInfo(token)
       .then(([userInfo, initialCards]) =>{
+        console.log(userInfo.name, userInfo.about, userInfo.email);
         setCurrentUser(userInfo);
         setCards(
           initialCards.map(transformCard)
         );
       })
       .catch(err => console.log(err));
-  }, [])
+  }, [token])
 
 
   return (

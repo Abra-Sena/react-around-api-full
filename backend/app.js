@@ -17,7 +17,10 @@ const { login, createUser } = require('./controllers/userController');
 const NotFounded = require('./middleware/errors/NotFounded');
 
 const app = express();
-const { PORT = 3000, BASE_PATH } = process.env;
+const { PORT = 3000 } = process.env;
+
+app.use(helmet());
+app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
@@ -26,18 +29,17 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
   useUnifiedTopology: true
 });
 
-app.use(helmet());
+// app.use((req, res, next) => {
+//   // res.header('Access-Control-Allow-Origin', 'https://around.nomoreparties.co');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept');
+//   res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST DELETE');
 
-app.use((req, res, next) => {
-  // res.header('Access-Control-Allow-Origin', 'https://around.nomoreparties.co');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST DELETE');
+//   next();
+// });
 
-  next();
-});
+// app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors()); //enable all cors requests
 app.options('*', cors()); //enable pre-flightimg
@@ -53,30 +55,30 @@ app.get('/crash-test', () => {
 
 app.post(
   '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-      avatar: Joi.string()
-    })
-  }),
+  // celebrate({
+  //   body: Joi.object().keys({
+  //     name: Joi.string().min(2).max(30),
+  //     about: Joi.string().min(2).max(30),
+  //     email: Joi.string().required().email(),
+  //     password: Joi.string().required(),
+  //     avatar: Joi.string()
+  //   })
+  // }),
   createUser
 );
 app.post(
   '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required()
-    })
-  }),
+  // celebrate({
+  //   body: Joi.object().keys({
+  //     email: Joi.string().required().email(),
+  //     password: Joi.string().required()
+  //   })
+  // }),
   login
 );
 
 // connecting routes
-app.use(auth);
+// app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
@@ -102,5 +104,4 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Server started\nApp listening at port ${PORT}`);
-  console.log('URL: ', BASE_PATH);
 });
