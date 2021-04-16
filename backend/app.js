@@ -19,6 +19,10 @@ const NotFounded = require('./middleware/errors/NotFounded');
 const app = express();
 const { PORT = 3000 } = process.env;
 
+app.use(cors()); //enable all cors requests
+app.options('*', cors()); //enable pre-flightimg
+app.use(requestLogger);
+app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.json());
 
@@ -29,22 +33,36 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
   useUnifiedTopology: true
 });
 
-// app.use((req, res, next) => {
-//   // res.header('Access-Control-Allow-Origin', 'https://around.nomoreparties.co');
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept');
-//   res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST DELETE');
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required()
+    })
+  }),
+  createUser
+);
 
-//   next();
-// });
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required()
+    })
+  }),
+  login
+);
 
-// app.use(bodyParser.urlencoded({ extended: false }));
+// connecting routes
+// app.use(auth);
+app.use('/', userRouter);
+app.use('/', cardRouter);
 
-// app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(cors()); //enable all cors requests
-app.options('*', cors()); //enable pre-flightimg
-
-app.use(requestLogger);
+app.get('*', (req, res, next) => {
+  next(new NotFounded('Requested resource not found'));
+});
 
 //to handle testing server crash - to be removed once project passed the review
 app.get('/crash-test', () => {
@@ -53,44 +71,9 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post(
-  '/signup',
-  // celebrate({
-  //   body: Joi.object().keys({
-  //     name: Joi.string().min(2).max(30),
-  //     about: Joi.string().min(2).max(30),
-  //     email: Joi.string().required().email(),
-  //     password: Joi.string().required(),
-  //     avatar: Joi.string()
-  //   })
-  // }),
-  createUser
-);
-app.post(
-  '/signin',
-  // celebrate({
-  //   body: Joi.object().keys({
-  //     email: Joi.string().required().email(),
-  //     password: Joi.string().required()
-  //   })
-  // }),
-  login
-);
-
-// connecting routes
-// app.use(auth);
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
-
 //errors handling
-app.get('*', (req, res) => {
-  throw new NotFounded('Requested resource not found');
-});
-
-//enabling error logger
-app.use(errorLogger);
-//celebrate error handler
-app.use(errors());
+app.use(errorLogger); //enabling error logger
+app.use(errors()); //celebrate error handler
 //centralized error handler
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
@@ -105,3 +88,11 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server started\nApp listening at port ${PORT}`);
 });
+
+// app.use((req, res, next) => {
+//   // res.header('Access-Control-Allow-Origin', 'https://around.nomoreparties.co');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-requested-With, Content-Type, Accept');
+//   res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST DELETE');
+
+//   next();
+// });

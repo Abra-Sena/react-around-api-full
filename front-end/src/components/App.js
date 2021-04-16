@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { Route, Switch, useHistory} from 'react-router-dom'
+
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -12,14 +14,31 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import EditProfilePopup from "./EditProfilePopup";
 import ImagePopup from './ImagePopup';
 import InfoTooltip from './InfoTooltip';
-import api from "../utils/api";
+import Api from "../utils/api";
 import * as auth from "../utils/auth";
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
 function App() {
-  // current user context
+  const [token, setToken] = React.useState(localStorage.getItem("jwt"));
+  const history = useHistory();
+  const api = new Api({
+    // baseUrl: "https://abravi-dev.students.nomoreparties.site"
+    baseUrl: "http://localhost:3000",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`
+    }
+  });
+
   const [currentUser, setCurrentUser] = React.useState({});
+  const [email, setEmail] = React.useState(false);
+  const [password, setPassword] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const [cards, setCards] = React.useState([]);
+  const [selectedCard, setSelectedCard] = React.useState({name: "Yosemite", link: "https://code.s3.yandex.net/web-code/yosemite.jpg"});
+
   //popupus
   const [isAddNewCard, setAddNewCardPopup] = React.useState(false);
   const [isEditAvatar, setEditAvatarPopup] = React.useState(false);
@@ -28,16 +47,6 @@ function App() {
   const [isImageExpand, setImageExpand] = React.useState(false);
   const [isInfoTooltip, setInfoTooltip] = React.useState(false);
 
-  const [email, setEmail] = React.useState(false);
-  const [password, setPassword] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
-  const [token, setToken] = React.useState(localStorage.getItem("jwt"));
-
-  const [cards, setCards] = React.useState([]);
-  const [selectedCard, setSelectedCard] = React.useState({name: "Yosemite", link: "https://code.s3.yandex.net/web-code/yosemite.jpg"});
-
-  const history = useHistory();
 
   //Registration
   function handleRegister(email, password) {
@@ -45,7 +54,6 @@ function App() {
       .then((res) => {
         if(res.data) {
           setIsSuccess(true);
-          // set state for result popup here
           toggleToolTip();
           history.push('/');
         }
@@ -67,21 +75,23 @@ function App() {
       if (!data) {
         setIsSuccess(false);
         toggleToolTip();
+        history.push('/signin'); // needed ???
       }
 
-      if(data.token) {
-        toggleToolTip()
-        setPassword('');
-        setIsSuccess(true);
-        setIsLoggedIn(true);
-        history.push('/');
-      }
+      toggleToolTip()
+      setPassword('');
+      setEmail(email);
+      setIsSuccess(true);
+      setIsLoggedIn(true);
+      setToken(localStorage.getItem('jwt'));
+      history.push('/');
     })
     .catch(err => console.log(err));
   }
   //Signout
   function handleSignOut() {
     localStorage.removeItem('jwt');
+    setToken('');
     setIsLoggedIn(false);
     setEmail('');
     history.push('/signin');
@@ -152,7 +162,7 @@ function App() {
   }
   function handleEditProfile({name, about}) {
     api.setUserInfos({name, about})
-      .then((user) => { setCurrentUser(user); })
+      .then((user) => { setCurrentUser({ name: user.name, about: user.about }); })
       .then(() =>  setEditProfilePopup(false))
       .catch(err => console.log(err));
   }
@@ -176,39 +186,52 @@ function App() {
   }
 
   //verify user authentication's inputs
-  React.useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
+  // React.useEffect(() => {
+  //   const jwt = localStorage.getItem('jwt');
 
-    if (jwt) {
-      auth.getContent(jwt)
-        .then((res) => {
-          if(res.err) {
-            console.log(res.err);
-          }
+  //   if (jwt) {
+  //     auth.getContent(jwt)
+  //       .then((res) => {
+  //         if(res.error) {
+  //           console.log(res.error);
+  //         }
 
-          setEmail(res.data.email);
-          setIsLoggedIn(true);
-          setIsSuccess(true);
-          setToken(jwt);
-          history.push('/');
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [history]);
+  //         setEmail(res.data.email);
+  //         setIsLoggedIn(true);
+  //         setIsSuccess(true);
+  //         setToken(jwt);
+  //         history.push('/');
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }, [history]);
 
   //collect user's informations
   React.useEffect(() => {
-    api.getAppInfo(token)
-      .then(([userInfo, initialCards]) =>{
-        console.log(userInfo.name, userInfo.about, userInfo.email);
-        setCurrentUser(userInfo);
-        setCards(
-          initialCards.map(transformCard)
-        );
-      })
-      .catch(err => console.log(err));
-  }, [token])
+    if(token) {
+      auth.getContent(token)
+        .then((res) => {
+          if(res) {
+            setIsLoggedIn(true);
+            setIsSuccess(true);
+            setEmail(res.email);
+            history.push('/');
+          }
+        })
+        .catch((err) => console.log(err));
 
+      api.getAppInfo()
+        .then(([userInfo, initialCards]) =>{
+          console.log('user: ', userInfo);
+          setCurrentUser(userInfo);
+          setCards(
+            initialCards.map(transformCard)
+          );
+        })
+        .catch(err => console.log(err));
+
+    }
+  }, [token])
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

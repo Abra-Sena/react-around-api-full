@@ -13,58 +13,43 @@ function getUsers(req, res, next) {
     .then((users) => {
       res.status(200).send(users);
     })
-    // .catch((err) => res.status(500).send({ message: err }))
     .catch(next);
 }
 
 function getOneUser(req, res, next) {
-  return User.findById(req.params.id === 'me' ? req.params._id : req.params.id)
+  return User.findById(req.params.id === 'me' ? req.user._id : req.params.id)
     .then((user) => {
       if (!user) {
         throw new NotFounded('User ID not found');
       }
       return res.status(200).send(user);
     })
-    // .catch((err) => {
-    //   if(err.name === 'CastError') {
-    //     res.status(400).send({ message: err.message });
-    //   }
-    //   res.status(500).send({ message: err });
-    // })
     .catch(next);
 }
 
-function createUser(req, res) {
-  const { name, about, email, password, avatar } = req.body;
+function createUser(req, res, next) {
+  const { email, password, name, about, avatar } = req.body;
   //check email andd password validity
   if(!email || !password) {
     throw new BadRequest('Please enter a valid email or password');
   }
 
   //hash password before saving to database
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name: req.body.name,
-      about: req.body.about,
-      email: req.body.email,
-      password: hash,
-      avatar: req.body.avatar
-    }))
-    .then((user) => {
-      if(!user) throw new BadRequest('Invalid Data!');
+  return bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({ email, password: hash, name, about, avatar })
+        .then((user) => {
+          if(!user) throw new BadRequest('Invalid Data!');
 
-      res.status(200).send({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar
-      });
-    })
-    .catch((err) => {
-      if(err.name === 'MongoError' && err.code === 11000) {
-        res.status(409).send({ message: 'This User already exist!' });
-      }
+          res.status(201).send({
+            _id: user._id,
+            email: user.email,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar
+          });
+        })
+        .catch(next);
     });
 }
 
@@ -98,7 +83,7 @@ function login(req, res, next) {
 }
 
 function getCurrentUser(req, res, next) {
-  User.findById(req.user._id)
+  User.findById({_id: req.user._id })
     .then((user) => {
       if(!user) throw new NotFounded('User not found!');
 
@@ -124,7 +109,6 @@ function updateProfile(req, res, next) {
 
       return res.status(200).send({ data: profile });
     })
-    // .catch((err) => res.status(500).send({ message: 'User profile cannot be patched', err }))
     .catch(next);
 }
 
@@ -135,7 +119,6 @@ function updateAvatar(req, res, next) {
 
       return res.status(200).send({data: userAvatar});
     })
-    // .catch((err) => res.status(500).send({ message: 'User avatar cannot be patched', err }))
     .catch(next);
 }
 

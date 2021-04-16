@@ -8,7 +8,7 @@ export const register = (email, password) => {
       Accept: "application/json",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({email, password})
+    body: JSON.stringify({ email, password })
   })
   .catch((err) => console.log(err));
 };
@@ -24,11 +24,8 @@ export const authorize = (email, password) => {
   })
     .then((res) => res.ok ? res.json() : Promise.reject('Error!' + res.statusText))
     .then((data) => {
-      if (data.token) {
-        localStorage.setItem("jwt", data.token);
-        return data;
-      }
-      return;
+      localStorage.setItem("jwt", data.token);
+      return getContent(data.token);
     })
     .catch((err) => console.log(err));
 };
@@ -39,7 +36,7 @@ export const getContent = (token) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      authorization: `Bearer ${token}`
     }
   })
   .then((res) => res.ok ? res.json() : Promise.reject('Error!' + res.statusText))
