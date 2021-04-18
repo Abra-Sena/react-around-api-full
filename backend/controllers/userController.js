@@ -83,9 +83,9 @@ function login(req, res, next) {
 }
 
 function getCurrentUser(req, res, next) {
-  User.findById({_id: req.user._id })
+  User.findById(req.user._id)
     .then((user) => {
-      if(!user) throw new NotFounded('User not found!');
+      if(!user) throw new NotFounded('Current User not found!');
 
       res.send({ data: user});
     })
@@ -93,6 +93,7 @@ function getCurrentUser(req, res, next) {
 }
 
 function updateProfile(req, res, next) {
+  console.log(req.body);
   return User.findByIdAndUpdate(
       req.user._id,
       {
@@ -105,7 +106,7 @@ function updateProfile(req, res, next) {
       }
     )
     .then((profile) => {
-      if(!profile) throw new NotFounded('Not a valid profile ID');
+      if(!profile) throw new NotFounded('Profile Update: Not a valid profile ID');
 
       return res.status(200).send({ data: profile });
     })
@@ -115,7 +116,7 @@ function updateProfile(req, res, next) {
 function updateAvatar(req, res, next) {
   return User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true, runValidators: true })
     .then((userAvatar) => {
-      if(!userAvatar) throw new NotFounded('Not a valid profile ID');
+      if(!userAvatar) throw new NotFounded('Avatar Update: Not a valid profile ID');
 
       return res.status(200).send({data: userAvatar});
     })

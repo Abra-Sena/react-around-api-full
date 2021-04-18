@@ -13,7 +13,7 @@ export default class Api {
    */
   getInitialCards() {
     return fetch(this._baseUrl + '/cards', {
-      headers: this._headers,
+      headers: this._headers
     })
     .then(res => this._checkResult(res))
   }
@@ -23,7 +23,7 @@ export default class Api {
    */
   getUserInfo() {
     return fetch(this._baseUrl + '/users/me', {
-      headers: this._headers,
+      headers: this._headers
     })
     .then(res => this._checkResult(res))
   }
@@ -63,7 +63,7 @@ export default class Api {
   //Adding and Removing Likes
   /** PUT https://around.nomoreparties.co/v1/groupId/cards/likes/cardId */
   addCardLike(cardId) {
-    return fetch(this._baseUrl + '/cards/' + cardId + '/likes/', {
+    return fetch(this._baseUrl + '/cards/' + cardId + '/likes', {
       headers: this._headers,
       method: "PUT"
     })
@@ -72,7 +72,7 @@ export default class Api {
 
   /** DELETE https://around.nomoreparties.co/v1/groupId/cards/likes/cardId */
   removeCardLike(cardId) {
-    return fetch(this._baseUrl + '/cards/' + cardId + '/likes/', {
+    return fetch(this._baseUrl + '/cards/' + cardId + '/likes', {
       headers: this._headers,
       method: "DELETE"
     })
@@ -96,11 +96,11 @@ export default class Api {
    * Editing the Profile
    * PATCH https://around.nomoreparties.co/v1/groupId/users/me
    */
-  setUserInfos({name, about}) {
+  setUserInfos(data) {
     return fetch(this._baseUrl + '/users/me', {
       headers: this._headers,
       method: "PATCH",
-      body: JSON.stringify({ name, about })
+      body: JSON.stringify(data)
     })
     .then(res => this._checkResult(res))
   }

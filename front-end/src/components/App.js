@@ -32,12 +32,12 @@ function App() {
   });
 
   const [currentUser, setCurrentUser] = React.useState({});
-  const [email, setEmail] = React.useState(false);
-  const [password, setPassword] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [isSuccess, setIsSuccess] = React.useState(false);
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({name: "Yosemite", link: "https://code.s3.yandex.net/web-code/yosemite.jpg"});
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isSuccess, setIsSuccess] = React.useState(false);
 
   //popupus
   const [isAddNewCard, setAddNewCardPopup] = React.useState(false);
@@ -120,7 +120,7 @@ function App() {
   }
   function handleCardLike(card) {
     // Check one more time if this card was already liked
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
     const res = isLiked ? api.removeCardLike(card.id) : api.addCardLike(card.id);
 
     res.then((newCard) => {
@@ -162,7 +162,7 @@ function App() {
   }
   function handleEditProfile({name, about}) {
     api.setUserInfos({name, about})
-      .then((user) => { setCurrentUser({ name: user.name, about: user.about }); })
+      .then((user) => { setCurrentUser(user.data) })
       .then(() =>  setEditProfilePopup(false))
       .catch(err => console.log(err));
   }
@@ -185,27 +185,6 @@ function App() {
       .catch(err => console.log(err));
   }
 
-  //verify user authentication's inputs
-  // React.useEffect(() => {
-  //   const jwt = localStorage.getItem('jwt');
-
-  //   if (jwt) {
-  //     auth.getContent(jwt)
-  //       .then((res) => {
-  //         if(res.error) {
-  //           console.log(res.error);
-  //         }
-
-  //         setEmail(res.data.email);
-  //         setIsLoggedIn(true);
-  //         setIsSuccess(true);
-  //         setToken(jwt);
-  //         history.push('/');
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // }, [history]);
-
   //collect user's informations
   React.useEffect(() => {
     if(token) {
@@ -222,8 +201,7 @@ function App() {
 
       api.getAppInfo()
         .then(([userInfo, initialCards]) =>{
-          console.log('user: ', userInfo);
-          setCurrentUser(userInfo);
+          setCurrentUser(userInfo.data);
           setCards(
             initialCards.map(transformCard)
           );
@@ -261,7 +239,7 @@ function App() {
           handleCardClick={(card) => handleCardClick(card)}
           onCardClick={(card) => handleCardClick(card)}
           onDeleteClick={(card) => handleCardDelete(card)}
-          onLickeClick={(card) => handleCardLike(card)}
+          onLikeClick={(card) => handleCardLike(card)}
         />
       </Switch>
 

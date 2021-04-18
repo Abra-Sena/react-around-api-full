@@ -41,7 +41,7 @@ function Main(props) {
                 owner={card.owner}
                 onCardClick={() => props.handleCardClick(card)}
                 onDeleteClick={(card) => props.handleCardDelete(card)}
-                onLickeClick={(card) => props.handleCardLike(card)}
+                onLikeClick={(card) => props.handleCardLike(card)}
               />
             )
           }
