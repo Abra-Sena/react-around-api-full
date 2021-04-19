@@ -1,0 +1,20 @@
+.title {
+  height: 24px;
+  margin: 40px auto;
+
+  font-family: 'Inter', 'Arial', sans-serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 100%;
+  text-align: center;
+
+  color: #FFFFFF;
+}
+
+@media screen and (min-width: 768px) {
+  .title {
+    height: 29px;
+    font-size: 24px;
+  }
+}

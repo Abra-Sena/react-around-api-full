@@ -1,0 +1,35 @@
+.form__close-tool {
+  position: absolute;
+  box-sizing: border-box;
+  cursor: pointer;
+  top: 25%;
+  right: 50%;
+  height: 28px;
+  width: 28px;
+  margin: 0;
+  padding: 0;
+
+  background: url('../../../images/close-icon.svg') center no-repeat;
+  border: 0;
+}
+
+.form__close-tool:hover {
+  opacity: .6;
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .form__close-tool {
+    height: 40px;
+    width: 40px;
+    right: 25%;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .form__close-tool {
+    top: 32%;
+    right: 32%;
+  }
+}
+

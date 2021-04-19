@@ -1,0 +1,9 @@
+@import url('./_edit/profile__photo_edit.css');
+
+.profile__photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+
+  border-radius: 50%;
+}
