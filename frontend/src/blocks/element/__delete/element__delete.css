@@ -1,0 +1,31 @@
+.element__delete {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 18px;
+  height: 20px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  background: url('../../../images/trash-icon.svg') center no-repeat;
+  border: 0;
+  /* opacity: 0; */
+  /* z-index is needed to compensate the transform of the card (scale) */
+  z-index: 1;
+}
+
+.element__delete_show {
+  visibility: visible;
+  /* opacity: 1; */
+}
+
+.element__delete_hidden {
+  visibility: hidden;
+}
+
+.element__delete:hover {
+  opacity: .6;
+  transition: .3s;
+}
