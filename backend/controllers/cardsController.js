@@ -33,7 +33,7 @@ function deleteCard(req, res, next) {
       } else if(!card.owner._id === req.user._id) {
         throw new UnAuthorized('Forbidden! You are not the owner.');
       } else {
-        return res.status(200).send({ data: card });
+        return res.status(200).send(card);
       }
     })
     .catch(next);
@@ -42,7 +42,7 @@ function deleteCard(req, res, next) {
 function likeCard(req, res, next) {
   return Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((likeId) => {
-      if (likeId) return res.status(200).send({ data: likeId });
+      if (likeId) return res.status(200).send(likeId);
 
       throw new BadRequest('You already liked this card.');
     })
@@ -53,7 +53,7 @@ function likeCard(req, res, next) {
 function unLikeCard(req, res, next) {
   return Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((unLikeId) => {
-      if (unLikeId) return res.status(200).send({ data: unLikeId });
+      if (unLikeId) return res.status(200).send(unLikeId);
 
       throw new BadRequest('You already liked this card.');
     })
