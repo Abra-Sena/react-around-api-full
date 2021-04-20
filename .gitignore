@@ -15,6 +15,7 @@ coverage
 
 # production
 build
+around-frontend
 
 # misc
 .DS_Store
