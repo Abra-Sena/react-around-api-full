@@ -23,7 +23,7 @@ function App() {
   const [token, setToken] = React.useState(localStorage.getItem("jwt"));
   const history = useHistory();
   const api = new Api({
-    baseUrl: "http://api.abravi-api.students.nomoreparties.site",
+    baseUrl: "https://api.abravi-api.students.nomoreparties.site",
     headers: {
       "Content-Type": "application/json",
       authorization: `Bearer ${token}`
