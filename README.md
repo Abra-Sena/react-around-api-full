@@ -22,7 +22,7 @@ The back-end server is a Linux VM created on Microsoft Azure
   - [x] React.js for client side
   - [x] Node.js, Express.js for server side
 
-### Languages
+## Languages
   - [x] JavaScript
   - [x] CSS
   - [x] HTML
