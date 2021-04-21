@@ -52,22 +52,24 @@ function App() {
   function handleRegister(email, password) {
     auth.register(email, password)
       .then((res) => {
-        if(res.data) {
-          setIsSuccess(true);
-          toggleToolTip();
-          setInfoMessage("Success! You have now been registered.");
-          history.push('/');
-        }
-        else {
-          setIsSuccess(false);
-          // set state for result popup here
-          toggleToolTip();
-          setInfoMessage("Oops, something went wrong! Please try again.");
-          return;
+        if(!res || res.status === 400 || res.status === 409) {
+          throw new Error('Error signup!')
+        } else if(res.status === 200 || 201) {
+          return res.json();
         }
       })
-      .catch(err => console.log(err));
+      .then(() => {
+        setIsSuccess(true);
+        toggleToolTip();
+        setInfoMessage("Success! You have now been registered.");
+        history.push('/');
+      })
+      .catch(err => {
+        console.log(err);
+        setInfoMessage("Oops, something went wrong! Please try again.");
+      });
   }
+
   //Login
   function handleLogin(email, password) {
     if(!email || !password) return;
