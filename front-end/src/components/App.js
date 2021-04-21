@@ -20,21 +20,15 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
 function App() {
-  const [token, setToken] = React.useState(localStorage.getItem("jwt"));
   const history = useHistory();
-  const api = new Api({
-    baseUrl: "https://api.abravi-api.students.nomoreparties.site",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${token}`
-    }
-  });
+  const [token, setToken] = React.useState(localStorage.getItem("jwt"));
 
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({name: "Yosemite", link: "https://code.s3.yandex.net/web-code/yosemite.jpg"});
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [infoMessage, setInfoMessage] = React.useState('');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
 
@@ -46,6 +40,13 @@ function App() {
   const [isImageExpand, setImageExpand] = React.useState(false);
   const [isInfoTooltip, setInfoTooltip] = React.useState(false);
 
+  const api = new Api({
+    baseUrl: "https://api.abravi-api.students.nomoreparties.site",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`
+    }
+  });
 
   //Registration
   function handleRegister(email, password) {
@@ -54,12 +55,14 @@ function App() {
         if(res.data) {
           setIsSuccess(true);
           toggleToolTip();
+          setInfoMessage("Success! You have now been registered.");
           history.push('/');
         }
         else {
           setIsSuccess(false);
           // set state for result popup here
           toggleToolTip();
+          setInfoMessage("Oops, something went wrong! Please try again.");
           return;
         }
       })
@@ -74,14 +77,16 @@ function App() {
       if (!data) {
         setIsSuccess(false);
         toggleToolTip();
+        setInfoMessage("Oops, something went wrong! Please try again.");
         history.push('/signin'); // needed ???
       }
 
       toggleToolTip()
+      setInfoMessage("Success! You are now logged in.");
       setPassword('');
-      setEmail(email);
       setIsSuccess(true);
       setIsLoggedIn(true);
+      setEmail(email);
       setToken(localStorage.getItem('jwt'));
       history.push('/');
     })
@@ -110,9 +115,6 @@ function App() {
   function handleAddCardBtn() {
     setAddNewCardPopup(true);
   }
-  // function handleDeleteBtn(card) { // not needed yet
-  //   setDeleteCardPopup(true);
-  // }
   function handleCardClick(card) {
     setSelectedCard(card);
     setImageExpand(true);
@@ -137,19 +139,10 @@ function App() {
     setImageExpand(false);
     setInfoTooltip(false);
   }
-
   function handlePopupClose(evt) {
     if(evt.target !== evt.currentTarget) return;
 
     closeAllPopups();
-  }
-  function handleCardDelete(card) {
-    api.removeCard(card.id)
-      .then(() => {
-        const cardsCopy = cards.filter((item) => item.id !== card.id);
-        setCards(cardsCopy);
-      })
-      .catch(err => console.log(err));
   }
 
   // edit avatar and profile
@@ -183,6 +176,14 @@ function App() {
       .then(() => setAddNewCardPopup(false))
       .catch(err => console.log(err));
   }
+  function handleCardDelete(card) {
+    api.removeCard(card.id)
+      .then(() => {
+        const cardsCopy = cards.filter((item) => item.id !== card.id);
+        setCards(cardsCopy);
+      })
+      .catch(err => console.log(err));
+  }
 
   //collect user's informations
   React.useEffect(() => {
@@ -192,7 +193,7 @@ function App() {
           if(res) {
             setIsLoggedIn(true);
             setIsSuccess(true);
-            setEmail(res.email);
+            setEmail(email);
             history.push('/');
           }
         })
@@ -225,7 +226,7 @@ function App() {
 
         <ProtectedRoute exact path='/'
           isLoggedIn={isLoggedIn}
-          email={email}
+          email={currentUser.email}
           cards={cards}
           component={Main}
           toggleToolTip={toggleToolTip}
@@ -244,7 +245,7 @@ function App() {
 
       <Footer />
 
-      <InfoTooltip isSuccess={isSuccess} isOpen={isInfoTooltip} onClose={handlePopupClose} />
+      <InfoTooltip infoMessage={infoMessage} isSuccess={isSuccess} isOpen={isInfoTooltip} onClose={handlePopupClose} />
 
       {/* Edit avatar popup */}
       <EditAvatarPopup isOpen={isEditAvatar} onClose={handlePopupClose} onUpdateAvatar={handleEditAvatar} />

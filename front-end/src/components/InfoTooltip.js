@@ -12,9 +12,7 @@ function InfoTooltip(props) {
           src={props.isSuccess ? authSuccess : authFailure}
           alt={props.isSuccess ? "success-icon" : "failure-icon"}
         />
-        <h2 className="form__title">
-          {props.isSuccess ? "Success! You have now been registered." : "Oops, something went wrong! Please try again."}
-        </h2>
+        <h2 className="form__title">{props.infoMessage}</h2>
       </div>
     </div>
   )

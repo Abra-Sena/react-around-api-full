@@ -7,10 +7,9 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
 
-
   return(
     <main className="content">
-      <Header email={props.isLoggedIn ? props.email : ""} link={'/'} linkText={props.isLoggedIn ? "Log out" : ""} onClick={props.handleSignOut} />
+      <Header email={props.isLoggedIn ? currentUser.email : ""} link={'/'} linkText={props.isLoggedIn ? "Log out" : ""} onClick={props.handleSignOut} />
 
       <section className="profile">
         <div className="profile__avatar">
