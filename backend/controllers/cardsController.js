@@ -42,9 +42,13 @@ function deleteCard(req, res, next) {
 function likeCard(req, res, next) {
   return Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((likeId) => {
-      if (likeId) return res.status(200).send(likeId);
+      if (likeId) res.status(200).send(likeId);
 
-      throw new BadRequest('You already liked this card.');
+      // if (!likeId) {
+      //   next(new NotFounded('No card with such ID.'));
+      // }
+
+      // return next(new BadRequest('You already liked this card.'));
     })
     .catch(next);
     // .catch((err) => res.status(500).send({ message: 'Card can not be liked', err }));
@@ -53,12 +57,11 @@ function likeCard(req, res, next) {
 function unLikeCard(req, res, next) {
   return Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((unLikeId) => {
-      if (unLikeId) return res.status(200).send(unLikeId);
+      if (unLikeId) res.status(200).send(unLikeId);
 
-      throw new BadRequest('You already liked this card.');
+      // throw new BadRequest('You already liked this card.');
     })
     .catch(next);
-    // .catch((err) => res.status(500).send({ message: 'Card cannot be unLiked', err }));
 }
 
 module.exports = {

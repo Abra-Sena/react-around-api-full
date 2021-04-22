@@ -74,12 +74,11 @@ function login(req, res, next) {
 
       res.send({ token });
     })
-    .catch(() => {
-      if(res.status(401)) {
-        throw new UnAuthorized('Incorrect email or password');
-      }
+    .catch((err) => {
+      if (res.status(401)) {
+        next(new UnAuthorized('Incorrect email or password'));
+      } else next(err);
     });
-    // .catch(next);
 }
 
 function getCurrentUser(req, res, next) {
@@ -93,7 +92,6 @@ function getCurrentUser(req, res, next) {
 }
 
 function updateProfile(req, res, next) {
-  console.log(req.body);
   return User.findByIdAndUpdate(
       req.user._id,
       {
