@@ -40,16 +40,10 @@ function deleteCard(req, res, next) {
 }
 
 function likeCard(req, res, next) {
-  const user = req.user._id;
-
-  return Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: user } }, { new: true })
+  return Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((likeId) => {
       if (!likeId) {
         next(new NotFounded('No card with such ID.'));
-      }
-
-      if (likeId.likes.includes(user)) {
-        throw new BadRequest('You already like this card.');
       }
 
       res.status(200).send(likeId);
